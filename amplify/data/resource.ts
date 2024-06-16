@@ -11,28 +11,31 @@ const schema = a.schema({
     .model({
       content: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow) => [allow.owner()]),
   CafeItem: a.model({
       id: a.id(),
       name: a.string(),
       price: a.string(),
-      orders: a.hasMany('OrderCafeItem', 'cafeItem')
+      // 4. Add relationship field to the join model
+      //    with the reference of `cafeItemId`
+      orders: a.hasMany('OrderCafeItem', 'cafeItemId')
   }).authorization((allow) => [allow.publicApiKey()]),
   Order: a.model({
-    id: a.id(),
-  }).authorization(allow => [allow.owner()]),
-  ShoppingCart: a.model({
-    id: a.id(),
-  }).authorization(allow => [allow.owner()]),
-  ShoppingCartCafeItem: a.model({
-    id: a.id(),
-    shoppingCart: a.belongsTo('ShoppingCart', 'shoppingCart'),
-    cafeItem: a.belongsTo('CafeItem', 'cafeItem')
+      id: a.id(),
+      // 3. Add relationship field to the join model
+      //    with the reference of `orderId`
+      items: a.hasMany('OrderCafeItem', 'orderId')
   }).authorization(allow => [allow.owner()]),
   OrderCafeItem: a.model({
-    id: a.id(),
-    order: a.belongsTo('Order', 'order'),
-    cafeItem: a.belongsTo('CafeItem', 'cafeItem')
+    // 1. Create reference fields to both ends of
+    //    the many-to-many relationship
+    orderId: a.id().required(),
+    cafeItemId: a.id().required(),
+    // 2. Create relationship fields to both ends of
+    //    the many-to-many relationship using their
+    //    respective reference fields
+    order: a.belongsTo('Order', 'orderId'),
+    cafeItem: a.belongsTo('CafeItem', 'cafeItemId'),
   }).authorization(allow => [allow.owner()]),
 });
 
@@ -41,7 +44,8 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
+    defaultAuthorizationMode: 'userPool',
+    // defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,

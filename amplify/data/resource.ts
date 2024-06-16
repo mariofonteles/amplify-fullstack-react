@@ -12,6 +12,30 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+  CafeItem: a.model({
+      id: a.id(),
+      name: a.string(),
+      price: a.string(),
+      shoppingCarts: a.hasMany('ShoppingCartCafeItem', 'cafeItem')
+  }).authorization((allow) => [allow.publicApiKey()]),
+  Order: a.model({
+    id: a.id(),
+    items: a.hasMany('OrderCafeItem', 'order')
+  }).authorization(allow => [allow.owner()]),
+  ShoppingCart: a.model({
+    id: a.id(),
+    items: a.hasMany('ShoppingCartCafeItem', 'shoppingCart')
+  }).authorization(allow => [allow.owner()]),
+  ShoppingCartCafeItem: a.model({
+    id: a.id(),
+    shoppingCart: a.belongsTo('ShoppingCart', 'shoppingCart'),
+    cafeItem: a.belongsTo('CafeItem', 'cafeItem')
+  }).authorization(allow => [allow.owner()]),
+  OrderCafeItem: a.model({
+    id: a.id(),
+    order: a.belongsTo('Order', 'order'),
+    cafeItem: a.belongsTo('CafeItem', 'cafeItem')
+  }).authorization(allow => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

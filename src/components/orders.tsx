@@ -23,7 +23,6 @@ const Orders: React.FC = () => {
             const order = await client.models.Order.list(
                 { authMode: 'userPool', selectionSet: ["id", "items.*"] },
               );
-              console.log(order)
 
               let newOrders = []
               for (let oneOrder of order.data) {
@@ -42,17 +41,12 @@ const Orders: React.FC = () => {
               }
               setOrders(newOrders)
         };
-    
-        // You need to restrict it at some point
-        // This is just dummy code and should be replaced by actual
+
         if (!orders || orders.length <=0) {
-            debugger;
             getToken();
         }
       }, []);      
-    // const [orders, setOrders] = useState<Array<Schema["Order"]["type"]>>([]);
 
-      console.log(orders)
   if (!orders || orders.length <= 0) {
     return (
         <>

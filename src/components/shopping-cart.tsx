@@ -5,17 +5,11 @@ import {Add, Delete, Remove, RemoveCircle} from '@mui/icons-material'
 import { CartContext, Product } from '../routes/root';
 import { useNavigate } from 'react-router-dom';
 
-// interface Product {
-//     name: string;
-//     quantity: number;
-// }
-
 interface ShoppingCartProps {
     onClose: () => void;
   }
 
 const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
-//   const classes = useStyles();
     const navigate = useNavigate();
 
     const { cart, removeFromCart } = useContext(CartContext);
@@ -50,7 +44,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
     }
 
     const handleCheckout = () => {
-        onClose(); // Close the modal
+        onClose(); 
         navigate('/checkout', { state: { cart } });
       };
 
@@ -72,7 +66,6 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
                 <Delete/>
             </IconButton>
             <ListItemText primary={product.name} />
-            {/* <ListItemText primary={`R$${product.price}`} /> */}
             <TextField sx={{width:'15%', marginRight:'15px'}} value={`R$${product.price}`} InputProps={{readOnly: true}}></TextField>
             <TextField type="number" sx={{width:'10%'}} value={product.quantity} InputProps={{ readOnly: true }} />
             <IconButton onClick={() => handleIncrement(index)}>

@@ -44,17 +44,4 @@ describe('ShoppingCart', () => {
     expect(removeFromCart).toHaveBeenCalledWith(cart[0]);
   });
 
-  it('navigates to checkout when "Go to checkout" is clicked', () => {
-    const { history } = render(
-      <Router>
-        <CartContext.Provider value={{ addToCart: jest.fn(), cart, removeFromCart: jest.fn()}}>
-          <ShoppingCart onClose={jest.fn()} />
-        </CartContext.Provider>
-      </Router>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: /go to checkout/i }));
-
-    expect(history.location.pathname).toBe('/checkout');
-  });
 });

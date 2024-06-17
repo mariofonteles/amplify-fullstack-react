@@ -19,7 +19,6 @@ const client = generateClient<Schema>();
 
 
 const Home: React.FC = () => {
-//   const classes = useStyles();
 const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
 
   useEffect(() => {
@@ -35,7 +34,6 @@ const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
   const { addToCart } = useContext(CartContext);
 
   const handleAddToCartClick = (product: any) => {
-    // const product = { name: 'Product 1', quantity: 1 }; // Replace with your actual product data
     addToCart({name: product.name, quantity: 1, price: product.price, id: product.id});
   };
 
@@ -65,7 +63,7 @@ const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
             <CardActionArea>
               <CardMedia
                 sx={{height: 140}}
-                image="https://via.placeholder.com/150" // Replace with your actual image URL
+                image="https://via.placeholder.com/150"
                 title={product.name}
               />
               <CardContent>

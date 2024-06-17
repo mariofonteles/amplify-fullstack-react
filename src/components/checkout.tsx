@@ -10,7 +10,7 @@ interface Product {
   id?: any;
   name: string;
   quantity: number;
-  price: number; // Add a price property to your product
+  price: number;
 }
 
 const client = generateClient<Schema>();
@@ -46,17 +46,7 @@ const Checkout: React.FC = () => {
                     navigate('/orders');
                 }, 3000);
             })
-        // client.models.OrderCafeItem.create({orderId: order.data.id as any, cafeItemId: cart[0].id},
-        //     {          authMode: 'userPool',
-        // })
     });
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   setPaymentComplete(true);
-    //   setTimeout(() => {
-    //     navigate('/home');
-    //   }, 3000);
-    // }, 3000);
   };
 
   if (loading) {

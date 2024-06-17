@@ -4,6 +4,7 @@ import { createStyles } from '@mui/material/styles/';
 import { CartContext } from "../routes/root"
 import { generateClient } from 'aws-amplify/api';
 import type { Schema } from "../../amplify/data/resource";
+import { Add } from '@mui/icons-material';
 
 const useStyles = createStyles({
   root: {
@@ -78,7 +79,7 @@ const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
             </CardActionArea>
             <CardActions>
               <Button size="small" color="primary" onClick={() => handleAddToCartClick(product)}>
-                Add to Cart
+              <Add /> Add to Cart
               </Button>
             </CardActions>
           </Card>

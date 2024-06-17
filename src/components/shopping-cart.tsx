@@ -74,7 +74,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
             <ListItemText primary={product.name} />
             {/* <ListItemText primary={`R$${product.price}`} /> */}
             <TextField sx={{width:'15%', marginRight:'15px'}} value={`R$${product.price}`} InputProps={{readOnly: true}}></TextField>
-            <TextField type="number" sx={{width:'15%'}} value={product.quantity} InputProps={{ readOnly: true }} />
+            <TextField type="number" sx={{width:'10%'}} value={product.quantity} InputProps={{ readOnly: true }} />
             <IconButton onClick={() => handleIncrement(index)}>
                 <Add />
             </IconButton>

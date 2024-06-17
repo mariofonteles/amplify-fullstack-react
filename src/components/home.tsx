@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Typography, Grid } from '@mui/material';
 import { createStyles } from '@mui/material/styles/';
 import { CartContext } from "../routes/root"
+import { generateClient } from 'aws-amplify/api';
+import type { Schema } from "../../amplify/data/resource";
 
 const useStyles = createStyles({
   root: {
@@ -15,6 +17,8 @@ const useStyles = createStyles({
 const Home: React.FC = () => {
 //   const classes = useStyles();
   const products = [{name: 'product 1', price: 10.00}, {name: 'product 2', price: 15.00}, {name: 'product 3', price: 5.00}]; // Replace with your actual product data
+  
+  const client = generateClient<Schema>();
 
   const { addToCart } = useContext(CartContext);
 

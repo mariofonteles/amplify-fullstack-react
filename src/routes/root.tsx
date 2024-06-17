@@ -1,6 +1,6 @@
 import React, { createContext } from 'react';
 import { AppBar, Toolbar, Typography, Button, TextField, List, ListItem, ListItemText, Box, IconButton } from '@mui/material';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import type { Schema } from "../../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
@@ -9,6 +9,8 @@ import '@aws-amplify/ui-react/styles.css'
 import MenuIcon from '@mui/icons-material/Menu';
 import Modal from '@mui/material/Modal';
 import ShoppingCart from '../components/shopping-cart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -27,11 +29,13 @@ export interface Product {
   name: string;
   quantity: number;
   price?: number;
+  id?: any;
 }
 
 export interface CartContextProps {
   cart: Product[];
   addToCart: (product: Product) => void;
+  removeFromCart: (product: Product) => void;
 }
 
 export const CartContext = createContext<CartContextProps>({} as CartContextProps);
@@ -43,17 +47,39 @@ const Root: React.FC = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [cart, setCart] = useState<Product[]>([]);
+  const [cartCount, setCartCount] = useState(0)
+  const navigate = useNavigate();
 
   const addToCart = (product: Product) => {
-    setCart(prevCart => [...prevCart, product]);
+    setCart(prevCart => {
+      setCartCount(() => prevCart.length + 1)
+      return [...prevCart, product]
+    });
   };
 
+  const removeFromCart = (product: Product) => {
+    setCart(prevCart => {
+      setCartCount(() => prevCart.length - 1)
+      let itemToRemove = prevCart.find((item) => item.name == product.name )
+      let index = prevCart.indexOf(itemToRemove)
+      return prevCart.filter( (item, idx) => idx != index)
+    });
+  };
+
+
+  const handleOrders = () => {
+    navigate('/orders');
+  }
+
+  const handleHome = () => {
+    navigate('/')
+  }
 
   return (
     <Authenticator>
       {({ signOut, user }) => (
       <main>
-      <CartContext.Provider value={{ cart, addToCart }}>
+      <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
         <AppBar position="fixed">
           <Toolbar>
             {/* <IconButton edge="start" color="inherit" aria-label="menu">
@@ -63,10 +89,12 @@ const Root: React.FC = () => {
               {user?.signInDetails?.loginId}
             </Typography>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
-              Café Facul
+              {/* Café Facul */}
+              <Button color="inherit" onClick={(handleHome)}>Café Facul</Button>
             </Typography>
             {/* <Button color="inherit">Menu</Button> */}
-            <Button color="inherit" onClick={handleOpen}>Carrinho</Button>
+            <Button color="inherit" onClick={handleOpen}><ShoppingCartIcon/>My Cart {cartCount > 0? '(' + cartCount + ')' : ''}</Button>
+            <Button color="inherit" onClick={handleOrders}><ReceiptIcon/>My Orders</Button>
             {/* <Button color="inherit">Minha Conta</Button> */}
             <Button onClick={signOut} color="inherit">Logout</Button>
           </Toolbar>

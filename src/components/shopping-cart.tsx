@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Typography, Grid, IconButton, List, ListItem, ListItemText, TextField, Box } from '@mui/material';
 import { createStyles } from '@mui/material/styles/';
-import {Add, Remove} from '@mui/icons-material'
+import {Add, Delete, Remove, RemoveCircle} from '@mui/icons-material'
 import { CartContext, Product } from '../routes/root';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
 //   const classes = useStyles();
     const navigate = useNavigate();
 
-    const { cart } = useContext(CartContext);
+    const { cart, removeFromCart } = useContext(CartContext);
 
     const [products, setProducts] = useState<Product[]>([
         ...cart
@@ -32,9 +32,22 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
 
     const handleDecrement = (index: number) => {
         const newProducts = [...products];
-        newProducts[index].quantity = Math.max(0, newProducts[index].quantity - 1);
+        newProducts[index].quantity = Math.max(1, newProducts[index].quantity - 1);
         setProducts(newProducts);
     };
+
+    const handleRemove = (product: Product, index: number) => {
+        let newProducts = []
+        if (products.length == 1) {
+            newProducts = []
+        }
+        else {
+            newProducts = products.splice(index, 1)
+        }
+        debugger;
+        setProducts(newProducts)
+        removeFromCart(product)
+    }
 
     const handleCheckout = () => {
         onClose(); // Close the modal
@@ -55,8 +68,12 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ onClose }) => {
         <List sx={{backgroundColor: 'white'}}>
         {cart.map((product, index) => (
             <ListItem key={index}>
+            <IconButton onClick={() => handleRemove(product, index)}>
+                <Delete/>
+            </IconButton>
             <ListItemText primary={product.name} />
-            <ListItemText primary={`R$${product.price}`} />
+            {/* <ListItemText primary={`R$${product.price}`} /> */}
+            <TextField sx={{width:'15%', marginRight:'15px'}} value={`R$${product.price}`} InputProps={{readOnly: true}}></TextField>
             <TextField type="number" sx={{width:'15%'}} value={product.quantity} InputProps={{ readOnly: true }} />
             <IconButton onClick={() => handleIncrement(index)}>
                 <Add />

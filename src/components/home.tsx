@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Typography, Grid } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Button, Typography, Grid, CircularProgress, Box } from '@mui/material';
 import { createStyles } from '@mui/material/styles/';
 import { CartContext } from "../routes/root"
 import { generateClient } from 'aws-amplify/api';
@@ -14,26 +14,52 @@ const useStyles = createStyles({
   },
 });
 
+const client = generateClient<Schema>();
+
+
 const Home: React.FC = () => {
 //   const classes = useStyles();
-  const products = [{name: 'product 1', price: 10.00}, {name: 'product 2', price: 15.00}, {name: 'product 3', price: 5.00}]; // Replace with your actual product data
+const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
+
+  useEffect(() => {
+    client.models.CafeItem.observeQuery({authMode: 'apiKey'}).subscribe({
+      next: (data) => setProducts([...data.items]),
+    });
+  }, []);
   
   const client = generateClient<Schema>();
+
+  console.log(products)
 
   const { addToCart } = useContext(CartContext);
 
   const handleAddToCartClick = (product: any) => {
     // const product = { name: 'Product 1', quantity: 1 }; // Replace with your actual product data
-    addToCart({name: product.name, quantity: 1, price: product.price});
+    addToCart({name: product.name, quantity: 1, price: product.price, id: product.id});
   };
+
+  if(!products || products.length <= 0) {
+    return (
+        <>
+         <Box display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+         </Box>
+         <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h4" align="center" gutterBottom>
+                Loading products...
+            </Typography>
+         </Box>
+        </>
+    )
+  }
   return (
     <>
      <Typography variant="h4" align="center" gutterBottom>
-        Escolha os produtos:
+        Choose your products:
       </Typography>
-    <Grid container spacing={3} justifyContent={'center'}>
+    <Grid container spacing={2} justifyContent={'start'} sx={{marginTop: '20px'}}>
         {products.map((product, index) => (
-        <Grid item key={index}>
+        <Grid item xs={3} key={index} sx={{display:'flex', justifyContent:'center'}}>
           <Card sx={{width: '15vw'}}>
             <CardActionArea>
               <CardMedia

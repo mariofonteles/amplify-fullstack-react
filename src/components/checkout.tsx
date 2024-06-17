@@ -3,12 +3,17 @@ import { List, ListItem, ListItemText, Typography, TextField, Button, Box, Circu
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CartContext } from '../routes/root';
 import { CheckCircleOutline } from '@mui/icons-material';
+import { generateClient } from 'aws-amplify/api';
+import type { Schema } from "../../amplify/data/resource";
 
 interface Product {
+  id?: any;
   name: string;
   quantity: number;
   price: number; // Add a price property to your product
 }
+
+const client = generateClient<Schema>();
 
 const Checkout: React.FC = () => {
   const location = useLocation();
@@ -16,18 +21,42 @@ const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
+  const [orders, setOrder] = useState<Array<Schema["Order"]["type"]>>([]);
 
   const totalCost = cart.reduce((total: number, product: Product) => total + product.price * product.quantity, 0);
 
   const handleCompletePayment = () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setPaymentComplete(true);
-      setTimeout(() => {
-        navigate('/home');
-      }, 3000);
-    }, 3000);
+    client.models.Order.create({ items: cart },   
+        {
+          authMode: 'userPool',
+        }).then( order => {
+            debugger;
+            let cartPromises: [Promise<any> | undefined] = [undefined]
+            for (let cartItem of cart) {
+                let myPromise = client.models.OrderCafeItem.create({orderId: order.data.id as any, cafeItemId: cartItem.id},
+                    {          authMode: 'userPool',
+                })
+                cartPromises.push(myPromise)
+            }
+            Promise.all(cartPromises).then( () => {
+                setLoading(false);
+                setPaymentComplete(true);
+                setTimeout(() => {
+                    navigate('/orders');
+                }, 3000);
+            })
+        // client.models.OrderCafeItem.create({orderId: order.data.id as any, cafeItemId: cart[0].id},
+        //     {          authMode: 'userPool',
+        // })
+    });
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   setPaymentComplete(true);
+    //   setTimeout(() => {
+    //     navigate('/home');
+    //   }, 3000);
+    // }, 3000);
   };
 
   if (loading) {
@@ -49,7 +78,7 @@ const Checkout: React.FC = () => {
           Payment Successful!
         </Typography>
         <Typography variant="subtitle1" align="center">
-          Redirecting you to home page...
+          Redirecting you to Orders page...
         </Typography>
       </Box>
     );

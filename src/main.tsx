@@ -12,6 +12,7 @@ import Root from "./routes/root";
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Home from './components/home.tsx'
 import Checkout from "./components/checkout.tsx";
+import Orders from "./components/orders.tsx";
 
 Amplify.configure(outputs);
 
@@ -20,13 +21,18 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     children: [{
-      path: "/home",
+      path: "/",
       element:  <Home />
     },
     {
       path: "/checkout",
       element: <Checkout/>
-    }]
+    },
+    {
+      path: "/orders",
+      element: <Orders/>
+    }
+  ]
   },
 ]);
 

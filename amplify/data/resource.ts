@@ -19,7 +19,7 @@ const schema = a.schema({
       // 4. Add relationship field to the join model
       //    with the reference of `cafeItemId`
       orders: a.hasMany('OrderCafeItem', 'cafeItemId')
-  }).authorization((allow) => [allow.publicApiKey()]),
+  }).authorization((allow) => [allow.publicApiKey(), allow.authenticated()]),
   Order: a.model({
       id: a.id(),
       // 3. Add relationship field to the join model
@@ -44,8 +44,8 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    // defaultAuthorizationMode: 'userPool',
-    defaultAuthorizationMode: "apiKey",
+    defaultAuthorizationMode: 'userPool',
+    // defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,

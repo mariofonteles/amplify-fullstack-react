@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 const [products, setProducts] = useState<Array<Schema["CafeItem"]["type"]>>([]);
 
   useEffect(() => {
-    client.models.CafeItem.observeQuery({authMode: 'apiKey'}).subscribe({
+    client.models.CafeItem.observeQuery().subscribe({
       next: (data) => setProducts([...data.items]),
     });
   }, []);
